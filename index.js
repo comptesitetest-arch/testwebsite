@@ -111,7 +111,7 @@ async function sendReminders() {
                                     <div style="${emailTheme.body}">
                                         <h2 style="${emailTheme.h2}">À DEMAIN ✨</h2>
                                         <p>Bonjour <b>${data.clientName}</b>,</p>
-                                        <p>Nous vous rappelons votre moment de bien-être prévu demain à :</p>
+                                        <p>Nous vous rappelons votre moment prévu demain à :</p>
                                         <div style="font-size:36px; font-weight:300; margin:20px 0; color: #2c2c2c;">${data.time}</div>
                                         <p style="color:#8a847f;">📍 À l'institut</p>
                                     </div>
@@ -241,7 +241,7 @@ app.post("/api/verify-confirm", async (req, res) => {
             headers: { "accept": "application/json", "api-key": process.env.MAIL_PASS, "content-type": "application/json" },
             body: JSON.stringify({
                 sender: { name: INSTITUT_NAME, email: process.env.SENDER_EMAIL },
-                to: [{ email, name: data.clientName }, { email: process.env.SENDER_EMAIL, name: "Notification Salon" }],
+                to: [{ email, name: data.clientName }, { email: process.env.SENDER_EMAIL, name: "Notification" }],
                 subject: `✅ Confirmation de rendez-vous – ${INSTITUT_NAME}`,
                 htmlContent: `
                     <div style="${emailTheme.wrapper}">
@@ -308,7 +308,7 @@ app.post("/api/appointments", checkAuth, async (req, res) => {
     } catch (error) { res.status(500).json({ error: "Erreur" }); }
 });
 
-// Bloquer une période entière (Horaires adaptés Esthétique : 9h-19h en semaine, 9h-17h le samedi)
+// Bloquer une période entière (On ignore les Dimanches et Lundis fermés par défaut)
 app.post("/api/admin/block-period", checkAuth, async (req, res) => {
     const { dateStart, dateEnd } = req.body;
     if (!dateStart || !dateEnd) return res.status(400).json({ error: "Dates manquantes" });
@@ -323,10 +323,10 @@ app.post("/api/admin/block-period", checkAuth, async (req, res) => {
 
         while (current <= end) {
             const day = current.getDay();
-            if (day !== 0 && day !== 1) { // Pas dimanche, pas lundi
+            if (day !== 0 && day !== 1) { // Pas dimanche (0), pas lundi (1)
                 const dateStr = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }).format(current);
-                const hStart = 9;                  // Début à 9h00 du matin
-                const hEnd   = day === 6 ? 17 : 19; // Samedi fin à 17h, semaine à 19h
+                const hStart = 9;
+                const hEnd   = day === 6 ? 17 : 19; 
 
                 const existingSnap = await db.collection("appointments").where("date", "==", dateStr).get();
                 const takenSlots = existingSnap.docs.map(d => d.data().time);
@@ -379,7 +379,7 @@ app.post("/api/admin/open-sunday", checkAuth, async (req, res) => {
             if (doc.data().isBlock) { batch.delete(doc.ref); count++; }
         });
         if (count > 0) await batch.commit();
-        res.json({ success: true, message: `Dimanche ouvert. ${count} blocs retirés.` });
+        res.json({ success: true, message: `Journée ouverte. ${count} blocs retirés.` });
     } catch (e) { res.status(500).json({ error: "Erreur" }); }
 });
 
@@ -499,11 +499,11 @@ app.get("/api/open-days", async (req, res) => {
     } catch (e) { res.json({ dates: [] }); }
 });
 
-app.get('/', (req, res) => { res.send('Serveur Institut de Beauté Opérationnel !'); });
+app.get('/', (req, res) => { res.send('Serveur de Test Opérationnel !'); });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Serveur Institut actif sur le port ${PORT}`);
+    console.log(`🚀 Serveur de test actif sur le port ${PORT}`);
     sendReminders();
     cleanupOldAppointments();
 });
