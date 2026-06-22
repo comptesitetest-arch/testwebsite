@@ -101,13 +101,13 @@ async function sendReminders() {
                     method: "POST",
                     headers: { "accept": "application/json", "api-key": process.env.MAIL_PASS, "content-type": "application/json" },
                     body: JSON.stringify({
-                        sender: { name: INSTITUT_NAME, email: process.env.SENDER_EMAIL },
+                        sender: { name: "TEST", email: "compte.site.test@gmail.com" },
                         to: [{ email: data.email, name: data.clientName }],
-                        subject: `🔔 Rappel : Votre rendez-vous de demain - ${INSTITUT_NAME}`,
+                        subject: `🔔 Rappel : Votre rendez-vous de demain - TEST`,
                         htmlContent: `
                             <div style="${emailTheme.wrapper}">
                                 <div style="${emailTheme.container}">
-                                    <div style="${emailTheme.header}"><h1 style="${emailTheme.h1}">${INSTITUT_NAME}</h1></div>
+                                    <div style="${emailTheme.header}"><h1 style="${emailTheme.h1}">TEST</h1></div>
                                     <div style="${emailTheme.body}">
                                         <h2 style="${emailTheme.h2}">À DEMAIN ✨</h2>
                                         <p>Bonjour <b>${data.clientName}</b>,</p>
@@ -180,13 +180,13 @@ app.post("/api/verify-request", async (req, res) => {
             method: "POST",
             headers: { "accept": "application/json", "api-key": process.env.MAIL_PASS, "content-type": "application/json" },
             body: JSON.stringify({
-                sender: { name: INSTITUT_NAME, email: process.env.SENDER_EMAIL },
+                sender: { name: "TEST", email: "compte.site.test@gmail.com" },
                 to: [{ email, name: clientName }],
-                subject: `Code de validation – ${INSTITUT_NAME}`,
+                subject: `Code de validation – TEST`,
                 htmlContent: `
                     <div style="${emailTheme.wrapper}">
                         <div style="${emailTheme.container}">
-                            <div style="${emailTheme.header}"><h1 style="${emailTheme.h1}">${INSTITUT_NAME}</h1></div>
+                            <div style="${emailTheme.header}"><h1 style="${emailTheme.h1}">TEST</h1></div>
                             <div style="${emailTheme.body}">
                                 <h2 style="${emailTheme.h2}">VÉRIFICATION</h2>
                                 <p>Bonjour ${clientName}, voici votre code de sécurité pour confirmer votre demande de rendez-vous :</p>
@@ -240,7 +240,7 @@ app.post("/api/verify-confirm", async (req, res) => {
             method: "POST",
             headers: { "accept": "application/json", "api-key": process.env.MAIL_PASS, "content-type": "application/json" },
             body: JSON.stringify({
-                sender: { name: INSTITUT_NAME, email: process.env.SENDER_EMAIL },
+                sender: { name: "Test", email: "compte.site.test@gmail.com" },
                 to: [{ email, name: data.clientName }, { email: process.env.SENDER_EMAIL, name: "Notification" }],
                 subject: `✅ Confirmation de rendez-vous – ${INSTITUT_NAME}`,
                 htmlContent: `
