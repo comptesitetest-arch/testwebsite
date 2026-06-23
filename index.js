@@ -31,7 +31,7 @@ app.use(express.json());
 
 const ADMIN_KEY = process.env.ADMIN_KEY || "Site2Test";
 const CALENDAR_ID = process.env.CALENDAR_ID || "compte.site.test@gmail.com";
-const INSTITUT_NAME = "Site Test";
+const NAME = "Site Test";
 
 // =======================================================
 // 2. STYLES DES EMAILS (DESIGN PREMIUM ESTHÉTIQUE)
@@ -109,11 +109,11 @@ async function sendReminders() {
                                 <div style="${emailTheme.container}">
                                     <div style="${emailTheme.header}"><h1 style="${emailTheme.h1}">TEST</h1></div>
                                     <div style="${emailTheme.body}">
-                                        <h2 style="${emailTheme.h2}">À DEMAIN ✨</h2>
+                                        <h2 style="${emailTheme.h2}">À DEMAIN</h2>
                                         <p>Bonjour <b>${data.clientName}</b>,</p>
                                         <p>Nous vous rappelons votre moment prévu demain à :</p>
                                         <div style="font-size:36px; font-weight:300; margin:20px 0; color: #2c2c2c;">${data.time}</div>
-                                        <p style="color:#8a847f;">📍 À l'institut</p>
+                                        <p style="color:#8a847f;">📍 Test</p>
                                     </div>
                                     <div style="${emailTheme.footer}">En cas d'empêchement, merci de nous prévenir au moins 24h à l'avance.</div>
                                 </div>
@@ -182,7 +182,7 @@ app.post("/api/verify-request", async (req, res) => {
             body: JSON.stringify({
                 sender: { name: "TEST", email: "compte.site.test@gmail.com" },
                 to: [{ email, name: clientName }],
-                subject: `Code de validation – TEST`,
+                subject: `Code de validation`,
                 htmlContent: `
                     <div style="${emailTheme.wrapper}">
                         <div style="${emailTheme.container}">
@@ -225,7 +225,7 @@ app.post("/api/verify-confirm", async (req, res) => {
         const gEvent = await calendar.events.insert({
             calendarId: CALENDAR_ID,
             requestBody: {
-                summary: `✨ Prestation : ${data.clientName}`,
+                summary: `Prestation : ${data.clientName}`,
                 description: `Tel: ${data.phone}`,
                 start: { dateTime: startISO, timeZone: "Europe/Paris" },
                 end: { dateTime: endISO, timeZone: "Europe/Paris" },
@@ -246,16 +246,16 @@ app.post("/api/verify-confirm", async (req, res) => {
                 htmlContent: `
                     <div style="${emailTheme.wrapper}">
                         <div style="${emailTheme.container}">
-                            <div style="${emailTheme.header}"><h1 style="${emailTheme.h1}">$TEST</h1></div>
+                            <div style="${emailTheme.header}"><h1 style="${emailTheme.h1}">TEST</h1></div>
                             <div style="${emailTheme.body}">
                                 <h2 style="${emailTheme.h2}; color:#9e775d;">VOTRE VENUE EST CONFIRMÉE</h2>
                                 <p>Rendez-vous validé avec succès pour <b>${data.clientName}</b>.</p>
                                 <div style="background:#faf7f2; padding:20px; border-radius:12px; margin:20px 0; text-align:left; border: 1px solid #f0e9e1;">
                                     <p style="margin:5px 0; color:#4a4a4a;">📅 <b>Date :</b> ${data.date}</p>
                                     <p style="margin:5px 0; color:#4a4a4a;">🕒 <b>Heure :</b> ${data.time}</p>
-                                    <p style="margin:5px 0; color:#4a4a4a;">📍 <b>Lieu :</b> À l'institut</p>
+                                    <p style="margin:5px 0; color:#4a4a4a;">📍 <b>Lieu :</b>Test</p>
                                 </div>
-                                <p style="font-size:13px; color:#8a847f;">Merci de vous présenter 5 minutes avant l'heure de votre soin.</p>
+                                <p style="font-size:13px; color:#8a847f;">Merci de vous présenter 5 minutes avant l'heure du rendez-vous.</p>
                             </div>
                         </div>
                     </div>`
@@ -296,7 +296,7 @@ app.post("/api/appointments", checkAuth, async (req, res) => {
                 const docRef = db.collection("appointments").doc(); 
                 batch.set(docRef, {
                     clientName: clientName || "⛔ CRÉNEAU INDISPONIBLE",
-                    date, time: timeStr, email: "admin@institut.fr", phone: "0000000000",
+                    date, time: timeStr, email: "admin@test.fr", phone: "0000000000",
                     reminderSent: true, isBlock: true, createdAt: new Date()
                 });
                 count++;
@@ -340,7 +340,7 @@ app.post("/api/admin/block-period", checkAuth, async (req, res) => {
                             const ref = db.collection("appointments").doc();
                             batch.set(ref, {
                                 clientName: "⛔ INDISPONIBLE", date: dateStr, time: timeStr,
-                                email: "admin@institut.fr", phone: "0000000000",
+                                email: "admin@test.fr", phone: "0000000000",
                                 reminderSent: true, isBlock: true, createdAt: new Date()
                             });
                             count++;
